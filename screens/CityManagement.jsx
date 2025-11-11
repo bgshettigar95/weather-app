@@ -1,9 +1,10 @@
 import React from "react";
+import { TextInput } from "react-native";
 
 const CityManagement = () => {
   return (
     <View>
-      <Text>CityManagement</Text>
+      <TextInput placeholder="Search city" />
     </View>
   );
 };
