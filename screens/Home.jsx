@@ -1,65 +1,85 @@
-import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
-import WheatherInfo from "../components/WheatherInfo";
+import React, { useEffect, useState, useCallback } from "react";
+import { Text, View, Alert, StyleSheet } from "react-native";
+import WeatherInfo from "../components/WeatherInfo";
 import {
   getCurrentPositionAsync,
   PermissionStatus,
   useForegroundPermissions,
 } from "expo-location";
-// import Config from "react-native-config";
+import Constants from "expo-constants";
 
-// console.log(Config.API_URL);
+const { API_KEY } = Constants.expoConfig.extra;
 
 const Home = () => {
-  const [loactionPermission, requestLocationPermission] =
+  const [locationPermission, requestLocationPermission] =
     useForegroundPermissions();
-  const [pickedLocation, setPickedLocation] = useState();
+  const [pickedLocation, setPickedLocation] = useState(null);
 
-  const verifyLocationPermission = async () => {
-    if (loactionPermission.status === PermissionStatus.UNDETERMINED) {
+  // Verify location permission
+  const verifyLocationPermission = useCallback(async () => {
+    if (!locationPermission) {
       const permission = await requestLocationPermission();
-
-      return permission.granted;
+      return permission?.granted ?? false;
     }
 
-    if (loactionPermission.status === PermissionStatus.DENIED) {
+    if (locationPermission.status === PermissionStatus.UNDETERMINED) {
+      const permission = await requestLocationPermission();
+      return permission?.granted ?? false;
+    }
+
+    if (locationPermission.status === PermissionStatus.DENIED) {
       Alert.alert(
-        "Not sufficient access",
-        " Please grant access to location to use this feature"
+        "Location Access Needed",
+        "Please grant access to location to use this feature."
       );
       return false;
     }
 
     return true;
-  };
+  }, [locationPermission, requestLocationPermission]);
 
-  const locateUserHandler = async () => {
+  // Fetch user location
+  const locateUserHandler = useCallback(async () => {
     const hasPermission = await verifyLocationPermission();
+    if (!hasPermission) return;
 
-    if (!hasPermission) {
-      return;
+    try {
+      const location = await getCurrentPositionAsync();
+      setPickedLocation({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+    } catch (error) {
+      Alert.alert("Error", "Unable to fetch location.");
+      console.error(error);
     }
+  }, [verifyLocationPermission]);
 
-    const location = await getCurrentPositionAsync();
-
-    setPickedLocation({
-      lat: location.coords.latitude,
-      lng: location.coords.longitude,
-    });
-  };
-
-  const getWheatherForecast = async () => {};
-
+  // Run once when component mounts
   useEffect(() => {
     locateUserHandler();
-  }, []);
+  }, [locateUserHandler]);
 
   return (
-    <View>
-      <Text>Home</Text>
-      <WheatherInfo />
+    <View style={styles.container}>
+      <Text style={styles.title}>Home</Text>
+      <WeatherInfo location={pickedLocation} />
     </View>
   );
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 16,
+  },
+});

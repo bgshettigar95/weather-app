@@ -5,7 +5,7 @@ const APIKEY = "7fa59d6a055c5d953120574f9dc2b940";
 
 const CityDetail = ({ city }) => {
   const [loading, setLoading] = useState(false);
-  const [wheather, setWheather] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   return (
     <View>
