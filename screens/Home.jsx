@@ -1,19 +1,31 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Text, View, Alert, StyleSheet } from "react-native";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from "react";
+import {
+  Text,
+  View,
+  Alert,
+  StyleSheet,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
 import WeatherInfo from "../components/WeatherInfo";
 import {
   getCurrentPositionAsync,
   PermissionStatus,
+  reverseGeocodeAsync,
   useForegroundPermissions,
 } from "expo-location";
-import Constants from "expo-constants";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
-const { API_KEY } = Constants.expoConfig.extra;
-
-const Home = () => {
+const Home = ({ navigation }) => {
   const [locationPermission, requestLocationPermission] =
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState(null);
+  const [cityName, setCityName] = useState(null);
 
   // Verify location permission
   const verifyLocationPermission = useCallback(async () => {
@@ -49,6 +61,14 @@ const Home = () => {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
       });
+
+      const address = await reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      const city = address[0]?.city || address[0]?.region || "Unknown location";
+      setCityName(city);
     } catch (error) {
       Alert.alert("Error", "Unable to fetch location.");
       console.error(error);
@@ -60,10 +80,32 @@ const Home = () => {
     locateUserHandler();
   }, [locateUserHandler]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: cityName || "Weather App",
+      headerRight: () => (
+        <View style={styles.configuration}>
+          <Pressable onPress={() => navigation.navigate("CityManagement")}>
+            <Ionicons
+              name="list"
+              size={24}
+              color="black"
+              style={styles.listIcon}
+            />
+          </Pressable>
+          <Ionicons name="settings" size={24} color="black" />
+        </View>
+      ),
+    });
+  });
+
+  if (!cityName) {
+    return <ActivityIndicator style={styles.container} size="large" />;
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <WeatherInfo location={pickedLocation} />
+      {pickedLocation && <WeatherInfo location={pickedLocation} />}
     </View>
   );
 };
@@ -81,5 +123,11 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     marginBottom: 16,
+  },
+  configuration: {
+    flexDirection: "row",
+  },
+  listIcon: {
+    marginRight: 20,
   },
 });
