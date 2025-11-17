@@ -59,7 +59,7 @@ const Home = ({ navigation }) => {
       const location = await getCurrentPositionAsync();
       setPickedLocation({
         lat: location.coords.latitude,
-        lng: location.coords.longitude,
+        lon: location.coords.longitude,
       });
 
       const address = await reverseGeocodeAsync({

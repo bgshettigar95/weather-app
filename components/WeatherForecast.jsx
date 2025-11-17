@@ -16,7 +16,7 @@ const WeatherForecast = ({ location }) => {
   const getWeatherForecast = async () => {
     try {
       setLoading(true);
-      const url = `${API_URL}?lat=${location.lat}&lon=${location.lng}&appid=${API_KEY}&units=metric`;
+      const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
       const response = await axios.get(url);
       setWeatherForecast(response.data);
       //   console.log(response.data);

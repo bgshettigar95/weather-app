@@ -23,7 +23,7 @@ const WeatherInfo = ({ location }) => {
     try {
       console.log(location);
       setLoading(true);
-      const url = `${API_URL}?lat=${location.lat}&lon=${location.lng}&appid=${API_KEY}&units=metric`;
+      const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
       const response = await axios.get(url);
       console.log(response.data);
       setWeatherData(response.data);
