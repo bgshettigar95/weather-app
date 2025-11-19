@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -11,6 +11,7 @@ import axios from "axios";
 import WeatherIcon from "./WeatherIcon";
 import WeatherForecast from "./WeatherForecast";
 import { capitalize } from "../utils";
+import { WeatherContext } from "../context/weather-context";
 
 const { API_KEY } = Constants.expoConfig.extra;
 const API_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -18,14 +19,13 @@ const API_URL = "https://api.openweathermap.org/data/2.5/weather";
 const WeatherInfo = ({ location }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { lang, temp } = useContext(WeatherContext);
 
   const getWeather = async () => {
     try {
-      console.log(location);
       setLoading(true);
-      const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
+      const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=${temp.tempUnit}&lang=${lang.name}`;
       const response = await axios.get(url);
-      console.log(response.data);
       setWeatherData(response.data);
     } catch (error) {
       alert("City not found!");
@@ -56,7 +56,10 @@ const WeatherInfo = ({ location }) => {
         size={100}
         icon={weatherData.weather[0].icon}
       />
-      <Text style={styles.temperature}>{weatherData.main.temp}°C</Text>
+      <Text style={styles.temperature}>
+        {weatherData.main.temp}
+        {temp.name}
+      </Text>
       <Text>Humidity: {weatherData.main.humidity}%</Text>
       <Text>Wind Speed: {weatherData.wind.speed} m/s</Text>
 

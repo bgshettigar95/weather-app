@@ -3,6 +3,7 @@ import React, {
   useState,
   useCallback,
   useLayoutEffect,
+  useRef,
 } from "react";
 import {
   Text,
@@ -11,6 +12,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Pressable,
+  Dimensions,
+  Animated,
+  TouchableOpacity,
 } from "react-native";
 import WeatherInfo from "../components/WeatherInfo";
 import {
@@ -20,12 +24,27 @@ import {
   useForegroundPermissions,
 } from "expo-location";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Settings from "../components/Settings";
+
+const { width } = Dimensions.get("window");
+const DRAWER_WIDTH = 320;
 
 const Home = ({ navigation }) => {
   const [locationPermission, requestLocationPermission] =
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState(null);
   const [cityName, setCityName] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(false);
+  const translateX = useRef(new Animated.Value(width)).current;
+
+  const toggleSettings = () => {
+    Animated.timing(translateX, {
+      toValue: isOpen ? width : width - DRAWER_WIDTH,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setIsOpen((isOpen) => !isOpen));
+  };
 
   // Verify location permission
   const verifyLocationPermission = useCallback(async () => {
@@ -93,7 +112,9 @@ const Home = ({ navigation }) => {
               style={styles.listIcon}
             />
           </Pressable>
-          <Ionicons name="settings" size={24} color="black" />
+          <Pressable onPress={toggleSettings}>
+            <Ionicons name="settings" size={24} color="black" />
+          </Pressable>
         </View>
       ),
     });
@@ -106,6 +127,18 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {pickedLocation && <WeatherInfo location={pickedLocation} />}
+      {/* Tap outside to close */}
+      {isOpen && (
+        <TouchableOpacity
+          style={styles.overlay}
+          onPress={toggleSettings}
+          activeOpacity={1}
+        />
+      )}
+
+      <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
+        <Settings />
+      </Animated.View>
     </View>
   );
 };
@@ -130,4 +163,33 @@ const styles = StyleSheet.create({
   listIcon: {
     marginRight: 20,
   },
+
+  drawer: {
+    position: "absolute",
+    top: 0,
+    width: DRAWER_WIDTH,
+    height: "100%",
+    backgroundColor: "#f1f1f1",
+    paddingVertical: 20,
+    elevation: 10,
+  },
+
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+
+  closeBtn: {
+    marginTop: 30,
+    backgroundColor: "#ff4444",
+    padding: 10,
+    borderRadius: 8,
+    alignSelf: "flex-start",
+  },
+
+  closeText: { color: "#fff", fontWeight: "bold" },
 });

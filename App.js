@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import CityManagement from './screens/CityManagement';
 import Home from './screens/Home';
 import CityDetail from './screens/CityDetail';
+import WeatherContextProvider from './context/weather-context';
 
 const Stack = createNativeStackNavigator();
 
@@ -21,9 +22,11 @@ function RootStack() {
 export default function App() {
 
   return (
-    <NavigationContainer>
-      <RootStack />
-    </NavigationContainer>
+    <WeatherContextProvider>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+    </WeatherContextProvider>
   );
 }
 

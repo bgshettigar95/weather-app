@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Text, View } from "react-native";
+import React from "react";
 import WeatherInfo from "../components/WeatherInfo";
 
 const CityDetail = ({ route }) => {

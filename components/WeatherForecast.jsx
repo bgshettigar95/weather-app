@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Constants from "expo-constants";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import axios from "axios";
 import HourlyForecastScreen from "./HourlyForecast";
 import { ActivityIndicator } from "react-native-paper";
 import DailyForecastScreen from "./DailyForecast";
+import { WeatherContext } from "../context/weather-context";
 
 const { API_KEY } = Constants.expoConfig.extra;
 const API_URL = "https://api.openweathermap.org/data/2.5/forecast";
@@ -12,14 +13,14 @@ const API_URL = "https://api.openweathermap.org/data/2.5/forecast";
 const WeatherForecast = ({ location }) => {
   const [weatherForecast, setWeatherForecast] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { lang, temp } = useContext(WeatherContext);
 
   const getWeatherForecast = async () => {
     try {
       setLoading(true);
-      const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=metric`;
+      const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=${temp.tempUnit}&lang=${lang.name}`;
       const response = await axios.get(url);
       setWeatherForecast(response.data);
-      //   console.log(response.data);
     } catch (error) {
       Alert.alert("Something went wrong!");
       console.error(error);
