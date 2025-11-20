@@ -50,15 +50,6 @@ const Settings = () => {
     setModalContext("");
   };
 
-  // const onTemperatureSelect = (e) => {
-  //   setISModalOpen(true);
-  //   console.log(e);
-  // };
-
-  // const onLanguageSelect = (e) => {
-  //   console.log(e);
-  // };
-
   return (
     <View>
       <Text style={styles.title}>Settings</Text>
@@ -77,7 +68,7 @@ const Settings = () => {
         <Text style={styles.settingItmeValue}>{temp.displayName}</Text>
       </Pressable>
 
-      <Modal visible={isModalOpen} animationType="slide">
+      <Modal visible={isModalOpen} animationType="slide" transparent={true}>
         <SettingsOption
           {...modalConfig}
           onCancel={onCancel}

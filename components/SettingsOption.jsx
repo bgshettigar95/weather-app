@@ -39,15 +39,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
   },
-  modalTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 20 },
+  modalTitle: { fontSize: 22, fontWeight: "600", marginBottom: 20 },
   closeButton: {
-    marginTop: 20,
-    backgroundColor: "#007bff",
     padding: 12,
     borderRadius: 6,
     alignItems: "center",
   },
-  closeButtonText: { color: "white", fontSize: 16 },
+  closeButtonText: { color: "#007bff", fontSize: 20, fontWeight: "600" },
 });
 
 export default SettingsOption;

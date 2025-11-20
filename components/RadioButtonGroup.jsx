@@ -12,7 +12,7 @@ const RadioButtonGroup = ({ selectedValue, options, onSelection }) => {
     <View>
       {options.map((option) => (
         <Pressable
-          key={option.label}
+          key={option.name}
           onPress={() => onChange(option)}
           style={styles.radioContainer}
         >
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   radioContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 20,
   },
   radioOuterCircle: {
     height: 22,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: "#007bff",
   },
-  radioLabel: { fontSize: 16 },
+  radioLabel: { fontSize: 18 },
 });
 
 export default RadioButtonGroup;
