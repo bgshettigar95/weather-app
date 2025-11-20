@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import Constants from "expo-constants";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, ActivityIndicator } from "react-native";
 import axios from "axios";
 import HourlyForecastScreen from "./HourlyForecast";
-import { ActivityIndicator } from "react-native-paper";
 import DailyForecastScreen from "./DailyForecast";
 import { WeatherContext } from "../context/weather-context";
 
@@ -32,7 +31,7 @@ const WeatherForecast = ({ location }) => {
   const getHourlyForecast = () => weatherForecast.list.slice(0, 8);
 
   const getDailyForecast = () => {
-    return weatherForecast.list.filter((weatherForecast, i) => i % 8 === 0);
+    return weatherForecast.list.filter((_, i) => i % 8 === 0);
   };
 
   useEffect(() => {

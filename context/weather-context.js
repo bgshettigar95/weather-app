@@ -11,8 +11,9 @@ export const WeatherContext = createContext({
         displayName: 'Celsius °C'
     },
     currentLocation: '',
-    searchedCities: []
-
+    searchedCities: [],
+    onTempSelect: () => { },
+    onLangSelect: () => { }
 });
 
 const WeatherContextProvider = ({ children }) => {
@@ -28,7 +29,10 @@ const WeatherContextProvider = ({ children }) => {
     });
     const [searchedCities, setSearchedCities] = useState([]);
 
-    return <WeatherContext.Provider value={{ currentLocation, lang, temp, searchedCities }}>{children}</WeatherContext.Provider>
+    const onLangSelect = (e) => { setLang(e) };
+    const onTempSelect = (e) => { setTemp(e) }
+
+    return <WeatherContext.Provider value={{ currentLocation, lang, temp, searchedCities, onLangSelect, onTempSelect }}>{children}</WeatherContext.Provider>
 };
 
 export default WeatherContextProvider;
