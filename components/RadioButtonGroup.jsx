@@ -1,17 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 const RadioButtonGroup = ({ selectedValue, options, onSelection }) => {
+  const [val, setVal] = useState(selectedValue);
+  const onChange = (option) => {
+    setVal(option);
+    onSelection(option);
+  };
+
   return (
     <View>
       {options.map((option) => (
         <Pressable
           key={option.label}
-          onPress={() => onSelection(option)}
+          onPress={() => onChange(option)}
           style={styles.radioContainer}
         >
           <View style={styles.radioOuterCircle}>
-            {selectedValue.name === option.name && (
+            {val.name === option.name && (
               <View style={styles.radioInnerCircle} />
             )}
           </View>
