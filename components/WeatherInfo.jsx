@@ -37,7 +37,7 @@ const WeatherInfo = ({ location }) => {
 
   useEffect(() => {
     getWeather();
-  }, []);
+  }, [lang.name, temp.name]);
 
   if (loading) {
     return <ActivityIndicator style={styles.container} size="large" />;

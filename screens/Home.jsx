@@ -118,7 +118,7 @@ const Home = ({ navigation }) => {
         </View>
       ),
     });
-  });
+  }, []);
 
   if (!cityName) {
     return <ActivityIndicator style={styles.container} size="large" />;
