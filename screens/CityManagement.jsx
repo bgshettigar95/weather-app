@@ -8,6 +8,7 @@ import React, {
 import {
   ActivityIndicator,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -102,6 +103,10 @@ const CityManagement = ({ navigation }) => {
     fetchAllCitiesWeather();
   }, [searchedCities]);
 
+  const goToCityDetail = (city) => {
+    navigation.navigate("CityDetail", { city: city.coord });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -145,18 +150,20 @@ const CityManagement = ({ navigation }) => {
             keyExtractor={(_, i) => i.toString()}
             renderItem={({ item }) => {
               return (
-                <View style={styles.cityWeatherContainer}>
-                  <View>
-                    <Text style={styles.city}>{item.name}</Text>
-                    <Text style={styles.cityDesc}>
-                      {capitalize(item.weather[0].description)}
-                    </Text>
+                <Pressable onPress={() => goToCityDetail(item)}>
+                  <View style={styles.cityWeatherContainer}>
+                    <View>
+                      <Text style={styles.city}>{item.name}</Text>
+                      <Text style={styles.cityDesc}>
+                        {capitalize(item.weather[0].description)}
+                      </Text>
+                    </View>
+                    <View style={styles.tempContainer}>
+                      <Text style={styles.temperature}>{item.main.temp}</Text>
+                      <Text style={styles.tempUnit}>{temp.name}</Text>
+                    </View>
                   </View>
-                  <View style={styles.tempContainer}>
-                    <Text style={styles.temperature}>{item.main.temp}</Text>
-                    <Text style={styles.tempUnit}>{temp.name}</Text>
-                  </View>
-                </View>
+                </Pressable>
               );
             }}
           />
