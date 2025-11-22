@@ -11,7 +11,10 @@ const Stack = createNativeStackNavigator();
 
 function RootStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerTransparent: true,
+      }}>
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="CityDetail" component={CityDetail} />
       <Stack.Screen name="CityManagement" component={CityManagement} />

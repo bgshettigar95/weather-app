@@ -176,6 +176,7 @@ const CityManagement = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    marginTop: 100,
   },
   inputContainer: {
     backgroundColor: "#f0f0f0",
