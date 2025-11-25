@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    alignItems: "center",
+
     marginTop: 100,
     width: "100%",
   },
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: "600",
     color: "white",
-    marginLeft: 8,
+    marginLeft: 4,
   },
   metrics: {
     flexDirection: "row",
