@@ -95,7 +95,6 @@ const CityManagement = ({ navigation }) => {
       cities.push(weather);
     }
     setCitiesWeather(cities);
-    console.log(cities);
     setLoading(false);
   };
 

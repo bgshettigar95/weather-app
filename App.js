@@ -26,6 +26,7 @@ export default function App() {
 
   return (
     <WeatherContextProvider>
+      <StatusBar style='light' />
       <NavigationContainer>
         <RootStack />
       </NavigationContainer>

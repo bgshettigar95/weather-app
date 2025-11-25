@@ -6,7 +6,6 @@ import React, {
   useRef,
 } from "react";
 import {
-  Text,
   View,
   Alert,
   StyleSheet,
@@ -102,18 +101,19 @@ const Home = ({ navigation }) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: cityName || "Weather App",
+      headerTintColor: "white",
       headerRight: () => (
         <View style={styles.configuration}>
           <Pressable onPress={() => navigation.navigate("CityManagement")}>
             <Ionicons
               name="list"
               size={24}
-              color="black"
+              color="white"
               style={styles.listIcon}
             />
           </Pressable>
           <Pressable onPress={toggleSettings}>
-            <Ionicons name="settings" size={24} color="black" />
+            <Ionicons name="settings" size={24} color="white" />
           </Pressable>
         </View>
       ),

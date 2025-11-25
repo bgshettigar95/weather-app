@@ -1,11 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { ImageBackground, StyleSheet } from "react-native";
 import { weatherBackgrounds } from "../data/weather-background";
 
 const WeatherBackground = ({ children, currentWeather }) => {
   const weatherCondition = currentWeather?.weather?.[0]?.main || "Clear"; // e.g., Clear, Clouds
-  const currentTime = new Date().getHours();
-  const isDay = currentTime >= 6 && currentTime < 18;
+
+  const now = currentWeather.dt; // current time (UTC)
+  const sunrise = currentWeather.sys.sunrise;
+  const sunset = currentWeather.sys.sunset;
+
+  const isDay = now >= sunrise && now <= sunset;
+
   const backgroundImage =
     weatherBackgrounds[weatherCondition]?.[isDay ? "day" : "night"] ||
     weatherBackgrounds["Clear"].day;
