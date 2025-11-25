@@ -36,14 +36,14 @@ const HourlyForecastScreen = ({ hourlyData }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 12,
+    paddingTop: 20,
   },
   title: { fontSize: 20, fontWeight: "600", color: "white" },
   hourlyData: {
     marginVertical: 20,
     marginHorizontal: 4,
     padding: 10,
-    backgroundColor: "rgba(144, 138, 138, 0.26)",
+    backgroundColor: "rgba(144, 138, 138, 0.45)",
     borderRadius: 6,
     justifyContent: "center",
     alignItems: "center",

@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     width: "100%",
     justifyContent: "space-around",
+    marginBottom: 20,
   },
   metricItem: {
     justifyContent: "center",
