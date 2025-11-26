@@ -19,19 +19,13 @@ import Constants from "expo-constants";
 import axios from "axios";
 import { WeatherContext } from "../context/weather-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { capitalize } from "../utils";
+import { capitalize, debounce } from "../utils";
+import { StatusBar } from "expo-status-bar";
+import WeatherBackground from "../components/WeatherBackground";
 
 const API_URL = "https://api.openweathermap.org/geo/1.0/direct";
 const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
 const { API_KEY } = Constants.expoConfig.extra;
-
-function debounce(func, delay) {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
-  };
-}
 
 const CityManagement = ({ navigation }) => {
   const [query, setQuery] = useState("");
@@ -108,6 +102,7 @@ const CityManagement = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="dark" />
       <View style={styles.inputContainer}>
         {query.length === 0 && (
           <Ionicons name="search" size={24} color="grey" />
@@ -141,7 +136,9 @@ const CityManagement = ({ navigation }) => {
           />
         </View>
       )}
+
       {loading && <ActivityIndicator style={styles.container} size="large" />}
+
       {citiesWeather.length > 0 && (
         <View>
           <FlatList
@@ -150,16 +147,24 @@ const CityManagement = ({ navigation }) => {
             renderItem={({ item }) => {
               return (
                 <Pressable onPress={() => goToCityDetail(item)}>
-                  <View style={styles.cityWeatherContainer}>
-                    <View>
-                      <Text style={styles.city}>{item.name}</Text>
-                      <Text style={styles.cityDesc}>
-                        {capitalize(item.weather[0].description)}
-                      </Text>
-                    </View>
-                    <View style={styles.tempContainer}>
-                      <Text style={styles.temperature}>{item.main.temp}</Text>
-                      <Text style={styles.tempUnit}>{temp.name}</Text>
+                  <View style={styles.weatherContainer}>
+                    <View style={styles.roundedClipper}>
+                      <WeatherBackground currentWeather={item}>
+                        <View style={styles.cityWeatherContainer}>
+                          <View>
+                            <Text style={styles.city}>{item.name}</Text>
+                            <Text style={styles.cityDesc}>
+                              {capitalize(item.weather[0].description)}
+                            </Text>
+                          </View>
+                          <View style={styles.tempContainer}>
+                            <Text style={styles.temperature}>
+                              {item.main.temp}
+                            </Text>
+                            <Text style={styles.tempUnit}>{temp.name}</Text>
+                          </View>
+                        </View>
+                      </WeatherBackground>
                     </View>
                   </View>
                 </Pressable>
@@ -209,14 +214,13 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
   },
-  cityWeatherContainer: {
-    marginVertical: 10,
-    marginHorizontal: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#fff",
+  roundedClipper: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  weatherContainer: {
+    marginVertical: 8,
+    marginHorizontal: 6,
     borderRadius: 12,
     shadowColor: "#000",
     shadowOpacity: 0.15,
@@ -224,13 +228,22 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 5,
   },
+  cityWeatherContainer: {
+    marginVertical: 10,
+    marginHorizontal: 10,
+    paddingHorizontal: 4,
+    paddingVertical: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   city: {
+    color: "#fff",
     fontSize: 22,
     fontWeight: "bold",
   },
   cityDesc: {
     fontSize: 16,
-    color: "grey",
+    color: "#fff",
   },
 
   tempContainer: {
@@ -240,12 +253,13 @@ const styles = StyleSheet.create({
 
   temperature: {
     fontSize: 30,
+    color: "#fff",
     fontWeight: "bold",
   },
   tempUnit: {
     marginTop: 6,
     fontSize: 12,
-    color: "grey",
+    color: "lightgrey",
   },
 });
 

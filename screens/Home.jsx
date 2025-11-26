@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useLayoutEffect,
   useRef,
+  useContext,
 } from "react";
 import {
   View,
@@ -14,6 +15,7 @@ import {
   Dimensions,
   Animated,
   TouchableOpacity,
+  Modal,
 } from "react-native";
 import WeatherInfo from "../components/WeatherInfo";
 import {
@@ -24,6 +26,7 @@ import {
 } from "expo-location";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Settings from "../components/Settings";
+import { WeatherContext } from "../context/weather-context";
 
 const { width } = Dimensions.get("window");
 const DRAWER_WIDTH = 320;
@@ -33,8 +36,8 @@ const Home = ({ navigation }) => {
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState(null);
   const [cityName, setCityName] = useState(null);
-
   const [isOpen, setIsOpen] = useState(false);
+  const { onCitySearch } = useContext(WeatherContext);
   const translateX = useRef(new Animated.Value(width)).current;
 
   const toggleSettings = () => {
@@ -85,6 +88,12 @@ const Home = ({ navigation }) => {
         longitude: location.coords.longitude,
       });
 
+      onCitySearch({
+        lat: location.coords.latitude,
+        lon: location.coords.longitude,
+        name: address[0]?.city || address[0]?.region,
+      });
+
       const city = address[0]?.city || address[0]?.region || "Unknown location";
       setCityName(city);
     } catch (error) {
@@ -96,12 +105,11 @@ const Home = ({ navigation }) => {
   // Run once when component mounts
   useEffect(() => {
     locateUserHandler();
-  }, [locateUserHandler]);
+  }, []);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: cityName || "Weather App",
-      headerTintColor: "white",
+      title: "",
       headerRight: () => (
         <View style={styles.configuration}>
           <Pressable onPress={() => navigation.navigate("CityManagement")}>
@@ -127,18 +135,23 @@ const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {pickedLocation && <WeatherInfo location={pickedLocation} />}
-      {/* Tap outside to close */}
-      {isOpen && (
+
+      <Modal
+        transparent
+        visible={isOpen}
+        animationType="none"
+        statusBarTranslucent
+      >
         <TouchableOpacity
           style={styles.overlay}
           onPress={toggleSettings}
           activeOpacity={1}
         />
-      )}
 
-      <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
-        <Settings />
-      </Animated.View>
+        <Animated.View style={[styles.drawer, { transform: [{ translateX }] }]}>
+          <Settings />
+        </Animated.View>
+      </Modal>
     </View>
   );
 };
@@ -149,14 +162,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   title: {
     fontSize: 22,
     fontWeight: "600",
     marginBottom: 16,
   },
+
   configuration: {
     flexDirection: "row",
   },
+
   listIcon: {
     marginRight: 20,
   },
@@ -169,6 +185,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1",
     paddingVertical: 20,
     elevation: 10,
+    zIndex: 10,
   },
 
   overlay: {

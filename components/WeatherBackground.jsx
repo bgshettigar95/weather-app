@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
     justifyContent: "center",
+    overflow: "hidden",
   },
 });
 

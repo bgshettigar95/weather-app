@@ -51,7 +51,7 @@ const Settings = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
       <Pressable
         style={({ pressed }) => [styles.item, pressed && styles.pressed]}
@@ -80,6 +80,11 @@ const Settings = () => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 50,
+  },
+
   title: {
     fontSize: 24,
     fontWeight: "bold",

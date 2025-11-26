@@ -44,7 +44,10 @@ const WeatherForecast = ({ location }) => {
 
   return (
     <ScrollView>
-      <HourlyForecastScreen hourlyData={getHourlyForecast()} />
+      <HourlyForecastScreen
+        hourlyData={getHourlyForecast()}
+        timezone={weatherForecast.timezone}
+      />
       <DailyForecastScreen dailyData={getDailyForecast()} />
     </ScrollView>
   );

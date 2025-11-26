@@ -12,7 +12,7 @@ const DailyForecastScreen = ({ dailyData }) => {
       <ScrollView>
         {dailyData.map((day, index) => (
           <View key={index} style={styles.dailyData}>
-            <View style={styles.dateContainer}>
+            <View>
               <Text style={styles.weekday}>
                 {new Date(day.dt * 1000).toLocaleDateString("en-US", {
                   weekday: "short",
@@ -21,18 +21,18 @@ const DailyForecastScreen = ({ dailyData }) => {
               <Text style={styles.date}>
                 {new Date(day.dt * 1000).toLocaleDateString()}
               </Text>
-              <Text style={styles.description}>
-                {capitalize(day.weather[0].description)}
-              </Text>
             </View>
 
             <View style={styles.weatherCondition}>
               <Image
-                style={{ width: 50, height: 50 }}
+                style={styles.image}
                 source={{
                   uri: `http://openweathermap.org/img/wn/${day.weather[0].icon}.png`,
                 }}
               />
+              <Text style={styles.description}>
+                {capitalize(day.weather[0].description)}
+              </Text>
             </View>
 
             <View style={styles.temperatureContainer}>
@@ -41,7 +41,7 @@ const DailyForecastScreen = ({ dailyData }) => {
                 {temp.name}
               </Text>
               <Text style={styles.temperatureFeels}>
-                {Math.round(day.main.feels_like)} {temp.name}
+                Feels like {Math.round(day.main.feels_like)} {temp.name}
               </Text>
             </View>
           </View>
@@ -58,22 +58,21 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "600", color: "white" },
   dailyData: {
     margin: 4,
-    padding: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     backgroundColor: "rgba(144, 138, 138, 0.45)",
     borderRadius: 6,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
   },
 
-  dateContainer: {
-    // width: "25%",
-  },
   weekday: {
     color: "white",
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
   },
+
   date: {
     color: "white",
     fontSize: 12,
@@ -85,19 +84,28 @@ const styles = StyleSheet.create({
   temperature: {
     color: "white",
     fontWeight: 800,
-    fontSize: 22,
+    fontSize: 26,
   },
   temperatureFeels: {
     color: "white",
+    fontSize: 12,
   },
   description: {
     color: "white",
     fontSize: 10,
+    position: "absolute",
+    top: 10,
+  },
+  image: {
+    width: 50,
+    height: 50,
+    position: "absolute",
+    top: -30,
   },
   weatherCondition: {
-    // flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
+    position: "relative",
   },
 });
 

@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { View, Text, ScrollView, Image, StyleSheet } from "react-native";
 import { WeatherContext } from "../context/weather-context";
 
-const HourlyForecastScreen = ({ hourlyData }) => {
+const HourlyForecastScreen = ({ hourlyData, timezone }) => {
   const { temp } = useContext(WeatherContext);
 
   return (
@@ -15,10 +15,11 @@ const HourlyForecastScreen = ({ hourlyData }) => {
               {new Date(hour.dt * 1000).toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
+                timezone,
               })}
             </Text>
             <Text style={styles.temperature}>
-              {hour.main.temp}
+              {Math.round(hour.main.temp)}
               {temp.name}
             </Text>
             <Image

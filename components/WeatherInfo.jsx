@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import Constants from "expo-constants";
 import axios from "axios";
-import WeatherIcon from "./WeatherIcon";
 import WeatherForecast from "./WeatherForecast";
 import { capitalize } from "../utils";
 import { WeatherContext } from "../context/weather-context";
 import WeatherBackground from "./WeatherBackground";
+import { StatusBar } from "expo-status-bar";
 
 const { API_KEY } = Constants.expoConfig.extra;
 const API_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -21,7 +21,7 @@ const API_URL = "https://api.openweathermap.org/data/2.5/weather";
 const WeatherInfo = ({ location }) => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { lang, temp, onSelectLocation } = useContext(WeatherContext);
+  const { lang, temp } = useContext(WeatherContext);
 
   const getWeather = async () => {
     try {
@@ -29,7 +29,6 @@ const WeatherInfo = ({ location }) => {
       const url = `${API_URL}?lat=${location.lat}&lon=${location.lon}&appid=${API_KEY}&units=${temp.tempUnit}&lang=${lang.name}`;
       const response = await axios.get(url);
       setWeatherData(response.data);
-      onSelectLocation(response.data);
     } catch (error) {
       alert("City not found!");
       console.error(error);
@@ -48,6 +47,7 @@ const WeatherInfo = ({ location }) => {
 
   return (
     <WeatherBackground currentWeather={weatherData}>
+      <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.weatherInfo}>
           <Text style={styles.currentLocation}>
@@ -58,11 +58,6 @@ const WeatherInfo = ({ location }) => {
           </Text>
 
           <View style={styles.weatherCondition}>
-            {/* <WeatherIcon
-              weatherType={weatherData.weather[0].main}
-              size={100}
-              icon={weatherData.weather[0].icon}
-            /> */}
             <Image
               style={{ width: 150, height: 150 }}
               source={{
@@ -78,7 +73,7 @@ const WeatherInfo = ({ location }) => {
 
         <View style={styles.metrics}>
           <View style={styles.metricItem}>
-            <Text style={styles.metricLabel}>Feels</Text>
+            <Text style={styles.metricLabel}>Feels like</Text>
             <Text style={styles.metricValue}>
               {weatherData.main.feels_like} {temp.name}
             </Text>
@@ -103,8 +98,7 @@ const WeatherInfo = ({ location }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-
+    paddingHorizontal: 20,
     marginTop: 100,
     width: "100%",
   },
@@ -121,8 +115,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   currentLocation: {
-    fontSize: 30,
-    fontWeight: "bold",
+    fontSize: 32,
+    fontWeight: "600",
     color: "white",
   },
   description: {
@@ -130,8 +124,8 @@ const styles = StyleSheet.create({
     color: "white",
   },
   temperature: {
-    fontSize: 50,
-    fontWeight: "600",
+    fontSize: 80,
+    fontWeight: "400",
     color: "white",
     marginLeft: 4,
   },
