@@ -54,6 +54,15 @@ City Detail View shows:
 
   ---
 
+📸 Preview
+---
+<img src="https://github.com/user-attachments/assets/997b0df0-96fe-4567-9b36-bddb6c75b21e" width="240" />
+<img src="https://github.com/user-attachments/assets/1c783f15-5140-410e-adf4-40f34eeccf8b" width="240" />
+<img src="https://github.com/user-attachments/assets/4c940fd0-777a-4e2b-a61e-a5b3d71c49f0" width="240" />
+<img src="https://github.com/user-attachments/assets/1a6cfd56-56f7-4dff-8b7e-7675ee7bc1aa" width="240" />
+
+---
+
   ## ⚙️ Installation & Setup
 
 ```bash
@@ -79,13 +88,6 @@ Create a .env file for your API key:
 API_KEY=your_api_key_here
 
 ----
-
-📸 Preview
----
-<img src="https://github.com/user-attachments/assets/997b0df0-96fe-4567-9b36-bddb6c75b21e" width="240" />
-<img src="https://github.com/user-attachments/assets/1c783f15-5140-410e-adf4-40f34eeccf8b" width="240" />
-<img src="https://github.com/user-attachments/assets/4c940fd0-777a-4e2b-a61e-a5b3d71c49f0" width="240" />
-<img src="https://github.com/user-attachments/assets/1a6cfd56-56f7-4dff-8b7e-7675ee7bc1aa" width="240" />
 
 
 
