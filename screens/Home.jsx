@@ -35,9 +35,8 @@ const Home = ({ navigation }) => {
   const [locationPermission, requestLocationPermission] =
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState(null);
-  const [cityName, setCityName] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { onCitySearch } = useContext(WeatherContext);
+  const { onCitySearch, onLocationSelect } = useContext(WeatherContext);
   const translateX = useRef(new Animated.Value(width)).current;
 
   const toggleSettings = () => {
@@ -78,24 +77,22 @@ const Home = ({ navigation }) => {
 
     try {
       const location = await getCurrentPositionAsync();
-      setPickedLocation({
-        lat: location.coords.latitude,
-        lon: location.coords.longitude,
-      });
 
       const address = await reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
 
-      onCitySearch({
+      const currentLocation = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
-        name: address[0]?.city || address[0]?.region,
-      });
+        city: address[0]?.city || address[0]?.region,
+        country: address[0].country,
+      };
 
-      const city = address[0]?.city || address[0]?.region || "Unknown location";
-      setCityName(city);
+      onCitySearch({ ...currentLocation });
+      onLocationSelect({ ...currentLocation });
+      setPickedLocation({ ...currentLocation });
     } catch (error) {
       Alert.alert("Error", "Unable to fetch location.");
       console.error(error);
@@ -128,7 +125,7 @@ const Home = ({ navigation }) => {
     });
   }, []);
 
-  if (!cityName) {
+  if (!pickedLocation) {
     return <ActivityIndicator style={styles.container} size="large" />;
   }
 

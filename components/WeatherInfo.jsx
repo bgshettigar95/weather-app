@@ -51,7 +51,7 @@ const WeatherInfo = ({ location }) => {
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.weatherInfo}>
           <Text style={styles.currentLocation}>
-            {weatherData.name}, {weatherData.sys.country}
+            {location.city}, {weatherData.sys.country}
           </Text>
           <Text style={styles.description}>
             {capitalize(weatherData.weather[0].description)}

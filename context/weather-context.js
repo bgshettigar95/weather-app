@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const WeatherContext = createContext({
     lang: {
@@ -10,12 +11,13 @@ export const WeatherContext = createContext({
         name: '°C',
         displayName: 'Celsius °C'
     },
-    currentLocation: '',
+    currentLocation: null,
     searchedCities: [],
     onCitySearch: () => { },
+    onDeleteCity: () => { },
     onTempSelect: () => { },
     onLangSelect: () => { },
-    onSelectLocation: () => { }
+    onLocationSelect: () => { }
 });
 
 const WeatherContextProvider = ({ children }) => {
@@ -28,17 +30,40 @@ const WeatherContextProvider = ({ children }) => {
         name: '°C',
         displayName: 'Celsius °C'
     });
+    const [currentLocation, setCurrentLocation] = useState(null);
     const [searchedCities, setSearchedCities] = useState([]);
+
+    useEffect(() => {
+        const getSavedCities = async () => {
+            const stored = await AsyncStorage.getItem('cities');
+            const parsed = stored ? JSON.parse(stored) : [];
+            setSearchedCities(parsed)
+        }
+
+        getSavedCities();
+    }, [])
 
     const onLangSelect = (e) => { setLang(e) };
     const onTempSelect = (e) => { setTemp(e) };
+    const onLocationSelect = (e) => { setCurrentLocation(e) }
     const onCitySearch = (e) => {
-        if (!searchedCities.find((city) => city.name === e.name)) {
-            setSearchedCities((cities) => [...cities, e])
+        if (!searchedCities.find((loc) => loc.city === e.city)) {
+            setSearchedCities((cities) => {
+                AsyncStorage.setItem('cities', JSON.stringify([...cities, e]));
+                return [...cities, e]
+            });
         }
     }
 
-    return <WeatherContext.Provider value={{ lang, temp, searchedCities, onLangSelect, onTempSelect, onCitySearch }}>{children}</WeatherContext.Provider>
+    const onDeleteCity = (e) => {
+        setSearchedCities(cities => {
+            const updatedCities = cities.filter(loc => loc.city !== e.city);
+            AsyncStorage.setItem('cities', JSON.stringify(updatedCities));
+            return updatedCities
+        });
+    }
+
+    return <WeatherContext.Provider value={{ currentLocation, lang, temp, searchedCities, onLangSelect, onTempSelect, onCitySearch, onDeleteCity, onLocationSelect }}>{children}</WeatherContext.Provider>
 };
 
 export default WeatherContextProvider;

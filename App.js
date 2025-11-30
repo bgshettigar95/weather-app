@@ -4,6 +4,7 @@ import CityManagement from './screens/CityManagement';
 import Home from './screens/Home';
 import CityDetail from './screens/CityDetail';
 import WeatherContextProvider from './context/weather-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,10 +23,12 @@ function RootStack() {
 
 export default function App() {
   return (
-    <WeatherContextProvider>
-      <NavigationContainer>
-        <RootStack />
-      </NavigationContainer>
-    </WeatherContextProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <WeatherContextProvider>
+        <NavigationContainer>
+          <RootStack />
+        </NavigationContainer>
+      </WeatherContextProvider>
+    </GestureHandlerRootView>
   );
 }

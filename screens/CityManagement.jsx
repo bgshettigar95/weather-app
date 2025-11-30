@@ -22,6 +22,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { capitalize, debounce } from "../utils";
 import { StatusBar } from "expo-status-bar";
 import WeatherBackground from "../components/WeatherBackground";
+import { Swipeable } from "react-native-gesture-handler";
+import * as Haptics from "expo-haptics";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const API_URL = "https://api.openweathermap.org/geo/1.0/direct";
 const WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -33,7 +36,7 @@ const CityManagement = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [citiesWeather, setCitiesWeather] = useState([]);
 
-  const { temp, lang, searchedCities, onCitySearch } =
+  const { temp, lang, searchedCities, onCitySearch, onDeleteCity } =
     useContext(WeatherContext);
 
   useLayoutEffect(() => {
@@ -65,9 +68,16 @@ const CityManagement = ({ navigation }) => {
   };
 
   const onSelectCity = (city) => {
-    onCitySearch(city);
+    const selectedCity = {
+      lat: city.lat,
+      lon: city.lon,
+      city: city.name,
+      country: city.country,
+    };
+
+    onCitySearch(selectedCity);
     setQuery("");
-    navigation.navigate("CityDetail", { city });
+    navigation.navigate("CityDetail", { city: selectedCity });
   };
 
   const fetchCityWeather = async (city) => {
@@ -97,11 +107,11 @@ const CityManagement = ({ navigation }) => {
   }, [searchedCities]);
 
   const goToCityDetail = (city) => {
-    navigation.navigate("CityDetail", { city: city.coord });
+    navigation.navigate("CityDetail", { city });
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} pointerEvents="box-none">
       <StatusBar style="dark" />
       <View style={styles.inputContainer}>
         {query.length === 0 && (
@@ -115,7 +125,7 @@ const CityManagement = ({ navigation }) => {
         />
       </View>
       {suggestions.length > 0 && (
-        <View style={styles.dropdown}>
+        <View style={styles.dropdown} pointerEvents="auto">
           <FlatList
             data={suggestions}
             keyExtractor={(_, i) => i.toString()}
@@ -144,30 +154,60 @@ const CityManagement = ({ navigation }) => {
           <FlatList
             data={citiesWeather}
             keyExtractor={(_, i) => i.toString()}
-            renderItem={({ item }) => {
+            renderItem={({ item, index }) => {
               return (
-                <Pressable onPress={() => goToCityDetail(item)}>
-                  <View style={styles.weatherContainer}>
-                    <View style={styles.roundedClipper}>
-                      <WeatherBackground currentWeather={item}>
-                        <View style={styles.cityWeatherContainer}>
-                          <View>
-                            <Text style={styles.city}>{item.name}</Text>
-                            <Text style={styles.cityDesc}>
-                              {capitalize(item.weather[0].description)}
-                            </Text>
-                          </View>
-                          <View style={styles.tempContainer}>
-                            <Text style={styles.temperature}>
-                              {item.main.temp}
-                            </Text>
-                            <Text style={styles.tempUnit}>{temp.name}</Text>
-                          </View>
-                        </View>
-                      </WeatherBackground>
+                <Swipeable
+                  leftThreshold={60}
+                  rightThreshold={60}
+                  renderRightActions={() => (
+                    <View style={styles.deleteIconContainer}>
+                      <Pressable
+                        onPress={() => onDeleteCity(searchedCities[index])}
+                      >
+                        <MaterialIcons name="delete" size={24} color="black" />
+                      </Pressable>
                     </View>
-                  </View>
-                </Pressable>
+                  )}
+                  renderLeftActions={() => (
+                    <View style={styles.deleteIconContainer}>
+                      <Pressable
+                        onPress={() => onDeleteCity(searchedCities[index])}
+                      >
+                        <MaterialIcons name="delete" size={24} color="black" />
+                      </Pressable>
+                    </View>
+                  )}
+                  onSwipeableOpen={(direction) => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  }}
+                >
+                  <Pressable
+                    onPress={() => goToCityDetail(searchedCities[index])}
+                  >
+                    <View style={styles.weatherContainer}>
+                      <View style={styles.roundedClipper}>
+                        <WeatherBackground currentWeather={item}>
+                          <View style={styles.cityWeatherContainer}>
+                            <View>
+                              <Text style={styles.city}>
+                                {searchedCities[index]?.city}
+                              </Text>
+                              <Text style={styles.cityDesc}>
+                                {capitalize(item.weather[0].description)}
+                              </Text>
+                            </View>
+                            <View style={styles.tempContainer}>
+                              <Text style={styles.temperature}>
+                                {item.main.temp}
+                              </Text>
+                              <Text style={styles.tempUnit}>{temp.name}</Text>
+                            </View>
+                          </View>
+                        </WeatherBackground>
+                      </View>
+                    </View>
+                  </Pressable>
+                </Swipeable>
               );
             }}
           />
@@ -181,6 +221,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     marginTop: 100,
+    zIndex: 1,
   },
   inputContainer: {
     backgroundColor: "#f0f0f0",
@@ -204,7 +245,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     top: 40,
-    zIndex: 10,
+    zIndex: 999,
   },
   item: {
     padding: 12,
@@ -245,12 +286,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#fff",
   },
-
   tempContainer: {
     flexDirection: "row",
     alignItems: "flex-start",
   },
-
   temperature: {
     fontSize: 30,
     color: "#fff",
@@ -260,6 +299,10 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 12,
     color: "lightgrey",
+  },
+  deleteIconContainer: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

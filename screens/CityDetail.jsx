@@ -11,7 +11,7 @@ const CityDetail = ({ route, navigation }) => {
     });
   }, []);
 
-  return <WeatherInfo location={{ lat: city.lat, lon: city.lon }} />;
+  return <WeatherInfo location={city} />;
 };
 
 export default CityDetail;
