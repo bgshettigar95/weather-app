@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const WeatherContext = createContext({
@@ -12,12 +12,13 @@ export const WeatherContext = createContext({
         displayName: 'Celsius °C'
     },
     currentLocation: null,
-    searchedCities: [],
+    searchedCities: null,
     onCitySearch: () => { },
     onDeleteCity: () => { },
     onTempSelect: () => { },
     onLangSelect: () => { },
-    onLocationSelect: () => { }
+    onLocationSelect: () => { },
+    loadCities: () => { }
 });
 
 const WeatherContextProvider = ({ children }) => {
@@ -31,17 +32,8 @@ const WeatherContextProvider = ({ children }) => {
         displayName: 'Celsius °C'
     });
     const [currentLocation, setCurrentLocation] = useState(null);
-    const [searchedCities, setSearchedCities] = useState([]);
+    const [searchedCities, setSearchedCities] = useState(null);
 
-    useEffect(() => {
-        const getSavedCities = async () => {
-            const stored = await AsyncStorage.getItem('cities');
-            const parsed = stored ? JSON.parse(stored) : [];
-            setSearchedCities(parsed)
-        }
-
-        getSavedCities();
-    }, [])
 
     const onLangSelect = (e) => { setLang(e) };
     const onTempSelect = (e) => { setTemp(e) };
@@ -63,7 +55,9 @@ const WeatherContextProvider = ({ children }) => {
         });
     }
 
-    return <WeatherContext.Provider value={{ currentLocation, lang, temp, searchedCities, onLangSelect, onTempSelect, onCitySearch, onDeleteCity, onLocationSelect }}>{children}</WeatherContext.Provider>
+    const loadCities = (e) => setSearchedCities([...e]);
+
+    return <WeatherContext.Provider value={{ currentLocation, lang, temp, searchedCities, onLangSelect, onTempSelect, onCitySearch, onDeleteCity, onLocationSelect, loadCities }}>{children}</WeatherContext.Provider>
 };
 
 export default WeatherContextProvider;

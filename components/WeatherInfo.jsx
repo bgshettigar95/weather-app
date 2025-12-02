@@ -14,6 +14,7 @@ import { capitalize } from "../utils";
 import { WeatherContext } from "../context/weather-context";
 import WeatherBackground from "./WeatherBackground";
 import { StatusBar } from "expo-status-bar";
+import * as NavigationBar from "expo-navigation-bar";
 
 const { API_KEY } = Constants.expoConfig.extra;
 const API_URL = "https://api.openweathermap.org/data/2.5/weather";
@@ -39,6 +40,8 @@ const WeatherInfo = ({ location }) => {
 
   useEffect(() => {
     getWeather();
+    NavigationBar.setBackgroundColorAsync("#202020");
+    NavigationBar.setButtonStyleAsync("light");
   }, [lang.name, temp.name]);
 
   if (loading) {

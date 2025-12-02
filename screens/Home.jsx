@@ -27,6 +27,7 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Settings from "../components/Settings";
 import { WeatherContext } from "../context/weather-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
 const DRAWER_WIDTH = 320;
@@ -36,7 +37,8 @@ const Home = ({ navigation }) => {
     useForegroundPermissions();
   const [pickedLocation, setPickedLocation] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { onCitySearch, onLocationSelect } = useContext(WeatherContext);
+  const { onCitySearch, onLocationSelect, loadCities, searchedCities } =
+    useContext(WeatherContext);
   const translateX = useRef(new Animated.Value(width)).current;
 
   const toggleSettings = () => {
@@ -99,10 +101,27 @@ const Home = ({ navigation }) => {
     }
   }, [verifyLocationPermission]);
 
-  // Run once when component mounts
+  const getSavedCities = async () => {
+    const stored = await AsyncStorage.getItem("cities");
+    const parsed = stored ? JSON.parse(stored) : [];
+
+    loadCities(parsed);
+  };
+
   useEffect(() => {
-    locateUserHandler();
+    const initialize = async () => {
+      await getSavedCities();
+    };
+
+    initialize();
   }, []);
+
+  // Run locateUserHandler ONLY when searchedCities finishes loading
+  useEffect(() => {
+    if (searchedCities !== null) {
+      locateUserHandler();
+    }
+  }, [searchedCities]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
